@@ -11,6 +11,9 @@ use Element119\IndexerDeployConfig\Exception\IndexerConfigurationException;
 use Element119\IndexerDeployConfig\Service\IndexerConfigReader;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\RuntimeException;
+use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Indexer\Controller\Adminhtml\Indexer\MassChangelog;
+use Magento\Indexer\Controller\Adminhtml\Indexer\MassOnTheFly;
 use Magento\Indexer\Model\Indexer;
 
 class SetIndexerMode
@@ -18,13 +21,25 @@ class SetIndexerMode
     /** @var IndexerConfigReader */
     private IndexerConfigReader $indexerConfigReader;
 
+    /** @var MessageManagerInterface */
+    private MessageManagerInterface $messageManager;
+
+    /** @var string  */
+    private string $indexerMode;
+
     /**
      * @param IndexerConfigReader $indexerConfigReader
+     * @param MessageManagerInterface $messageManager
+     * @param string $indexerMode
      */
     public function __construct(
-        IndexerConfigReader $indexerConfigReader
+        IndexerConfigReader $indexerConfigReader,
+        MessageManagerInterface $messageManager,
+        string $indexerMode = ''
     ) {
         $this->indexerConfigReader = $indexerConfigReader;
+        $this->messageManager = $messageManager;
+        $this->indexerMode = $indexerMode;
     }
 
     /**
@@ -53,6 +68,47 @@ class SetIndexerMode
         }
 
         return [$scheduled];
+    }
+
+    /**
+     * Prevent indexers from changing modes via the admin based on deploy configuration.
+     *
+     * @param MassChangelog|MassOnTheFly $subject
+     * @param callable $proceed
+     * @return void
+     * @throws FileSystemException
+     * @throws IndexerConfigurationException
+     * @throws RuntimeException
+     */
+    public function aroundExecute(
+        $subject,
+        callable $proceed
+    ) {
+        if (!($configuredIndexers = $this->indexerConfigReader->getIndexerConfig())) {
+            return $proceed();
+        }
+
+        $removedIndexers = [];
+        $indexerIdsToUpdate = $subject->getRequest()->getParam('indexer_ids');
+
+        foreach ($indexerIdsToUpdate as $key => $indexerToUpdate) {
+            if ($this->indexerHasMode($configuredIndexers, $indexerToUpdate, $this->indexerMode)) {
+                unset($indexerIdsToUpdate[$key]);
+                $removedIndexers[] = $indexerToUpdate;
+            }
+        }
+
+        if ($removedIndexers) {
+            $subject->getRequest()->setParam('indexer_ids', $indexerIdsToUpdate);
+            $this->messageManager->addErrorMessage(
+                __(
+                    'Cannot update the following indexer(s) because they are locked by configuration: %1',
+                    implode(', ', $removedIndexers)
+                )
+            );
+        }
+
+        $proceed();
     }
 
     /**
