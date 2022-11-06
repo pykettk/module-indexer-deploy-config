@@ -7,32 +7,29 @@ declare(strict_types=1);
 
 namespace Element119\IndexerDeployConfig\Block\Backend\Grid\Column\Renderer;
 
-use Element119\IndexerDeployConfig\Exception\IndexerConfigurationException;
-use Element119\IndexerDeployConfig\Service\IndexerConfigReader;
+use Element119\IndexerDeployConfig\Model\IndexerConfig;
 use Magento\Backend\Block\Context;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer;
 use Magento\Framework\DataObject;
-use Magento\Framework\Exception\FileSystemException;
-use Magento\Framework\Exception\RuntimeException;
 use Magento\Framework\Phrase;
 
 class ModeLocked extends AbstractRenderer
 {
-    /** @var IndexerConfigReader */
-    private IndexerConfigReader $indexerConfigReader;
+    /** @var IndexerConfig */
+    private IndexerConfig $indexerConfig;
 
     /**
      * @param Context $context
-     * @param IndexerConfigReader $indexerConfigReader
+     * @param IndexerConfig $indexerConfig
      * @param array $data
      */
     public function __construct(
         Context $context,
-        IndexerConfigReader $indexerConfigReader,
+        IndexerConfig $indexerConfig,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->indexerConfigReader = $indexerConfigReader;
+        $this->indexerConfig = $indexerConfig;
     }
 
     /**
@@ -41,13 +38,9 @@ class ModeLocked extends AbstractRenderer
      */
     public function render(DataObject $row): Phrase
     {
-        try {
-            $indexerConfig = $this->indexerConfigReader->getIndexerConfig();
-            $saveIndexers = $this->indexerConfigReader->getIndexersByMode('save', $indexerConfig);
-            $scheduleIndexers = $this->indexerConfigReader->getIndexersByMode('schedule', $indexerConfig);
-        } catch (IndexerConfigurationException | FileSystemException | RuntimeException $e) {
-            return __('Could not retrieve indexer deploy config.');
-        }
+        $indexerConfig = $this->indexerConfig->getIndexerConfig();
+        $saveIndexers = $this->indexerConfig->getIndexersByMode('save', $indexerConfig);
+        $scheduleIndexers = $this->indexerConfig->getIndexersByMode('schedule', $indexerConfig);
 
         $indexerId = $row->getData('indexer_id');
 
