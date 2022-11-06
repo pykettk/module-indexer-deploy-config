@@ -88,5 +88,20 @@ php bin/magento setup:upgrade
 <br>
 
 ## 📸 Screenshots & GIFs
+### Indexer Config Validation
+Coming soon...
+
+<br>
+
+### Indexer Config Importing
+Coming soon...
+
+<br>
+
 ### Restricted Admin Controls
+![Screenshot 2022-11-06 at 19 13 09](https://user-images.githubusercontent.com/40261741/200190327-5e9f5204-d294-4a27-a27e-74fb6ea6b968.png)
+
+<br>
+
+### `indexer:set-mode` Messaging
 Coming soon...
