@@ -9,6 +9,10 @@
             "email": "pykettk@gmail.com"
         }
     ],
+    "require": {
+        "magento/module-indexer": "^100.0",
+        "php": "^7.4 || ^8.0"
+    },
     "autoload": {
         "psr-4": {
             "Element119\\IndexerDeployConfig\\": ""
