@@ -12,4 +12,20 @@
                 type="Element119\IndexerDeployConfig\Plugin\SetIndexerMode"
                 sortOrder="999999"/>
     </type>
+
+    <type name="Magento\Deploy\Model\DeploymentConfig\ImporterPool">
+        <arguments>
+            <argument name="importers" xsi:type="array">
+                <item name="indexers" xsi:type="array">
+                    <item name="importer_class" xsi:type="string">
+                        Element119\IndexerDeployConfig\Model\Config\Importer
+                    </item>
+                    <item name="validator_class" xsi:type="string">
+                        Element119\IndexerDeployConfig\Model\Config\Validator
+                    </item>
+                    <item name="sort_order" xsi:type="number">1000</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
 </config>

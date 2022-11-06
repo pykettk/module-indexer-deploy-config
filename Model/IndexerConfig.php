@@ -66,27 +66,6 @@ class IndexerConfig
     }
 
     /**
-     * Validate indexer configuration in app/etc/config.php
-     *
-     * @return void
-     * @throws IndexerConfigurationException
-     */
-    public function validateIndexerConfig(): void
-    {
-        $saveIndexers = $this->getIndexersByMode('save');
-        $scheduleIndexers = $this->getIndexersByMode('schedule');
-
-        if ($intersectingIndexers = array_intersect($saveIndexers, $scheduleIndexers)) {
-            throw new IndexerConfigurationException(
-                __(
-                    'Ambiguous indexer configuration found. The following indexer(s) are configured as both save and schedule: %1',
-                    implode(', ', $intersectingIndexers)
-                )
-            );
-        }
-    }
-
-    /**
      * Determine if a given indexer is in a given mode, according to a set of given indexer configuration.
      *
      * @param string $indexerId
