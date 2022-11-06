@@ -18,11 +18,15 @@
 ---
 
 ## 📝 Features
-✔️ ...
+✔️ Allows you to selectively lock indexer modes via the `app/etc/config.php` file
 
-✔️ ...
+✔️ Indexer configuration validated and imported as part of `app:config:import`
 
-✔️ ...
+✔️ Supports custom indexers
+
+✔️ Provides messaging for admins to see which indexers are locked via deploy config
+
+✔️ Informs admins when they try to change indexer modes that are locked via deploy config
 
 <br/>
 
@@ -54,6 +58,35 @@ php bin/magento setup:upgrade
 <br/>
 
 ## 📚 User Guide
-...
+### Locking Indexer Modes
+1. Add a new `indexers` array to the `app/etc/config.php` file
+2. Add the `realtime` or `schedule` arrays to the `indexers` array as required
+3. Specify the indexer IDs you want to lock to a specific mode within the respective mode array
+
+### Example
+```php
+'indexers' => [
+    'realtime' => [
+        'catalogrule_rule',
+        'design_config_grid',
+    ],
+    'schedule' => [
+        'catalog_category_product',
+        'catalog_product_category',
+        'catalog_product_attribute',
+        'catalog_product_price',
+    ],
+],
+```
 
 <br>
+
+> **Note**
+> 
+> Empty indexer mode arrays may be omitted in the cases where you don't want to lock any indexers to that mode.
+
+<br>
+
+## 📸 Screenshots & GIFs
+### Restricted Admin Controls
+Coming soon...
