@@ -9,6 +9,7 @@ namespace Element119\IndexerDeployConfig\Plugin;
 
 use Element119\IndexerDeployConfig\Model\IndexerConfig;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Indexer\Console\Command\IndexerSetModeCommand as IndexerMode;
 use Magento\Indexer\Controller\Adminhtml\Indexer\MassChangelog;
 use Magento\Indexer\Controller\Adminhtml\Indexer\MassOnTheFly;
 use Magento\Indexer\Model\Indexer;
@@ -53,11 +54,11 @@ class SetIndexerMode
         $indexerConfig = $this->indexerConfig->getIndexerConfig();
         $indexerId = $subject->getId();
 
-        if ($this->indexerConfig->indexerHasMode($indexerId, 'schedule', $indexerConfig)) {
+        if ($this->indexerConfig->indexerHasMode($indexerId, IndexerMode::INPUT_KEY_SCHEDULE, $indexerConfig)) {
             return [true];
         }
 
-        if ($this->indexerConfig->indexerHasMode($indexerId, 'save', $indexerConfig)) {
+        if ($this->indexerConfig->indexerHasMode($indexerId, IndexerMode::INPUT_KEY_REALTIME, $indexerConfig)) {
             return [false];
         }
 

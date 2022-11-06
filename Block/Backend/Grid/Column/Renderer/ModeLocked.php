@@ -12,6 +12,7 @@ use Magento\Backend\Block\Context;
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\AbstractRenderer;
 use Magento\Framework\DataObject;
 use Magento\Framework\Phrase;
+use Magento\Indexer\Console\Command\IndexerSetModeCommand as IndexerMode;
 
 class ModeLocked extends AbstractRenderer
 {
@@ -39,8 +40,8 @@ class ModeLocked extends AbstractRenderer
     public function render(DataObject $row): Phrase
     {
         $indexerConfig = $this->indexerConfig->getIndexerConfig();
-        $saveIndexers = $this->indexerConfig->getIndexersByMode('save', $indexerConfig);
-        $scheduleIndexers = $this->indexerConfig->getIndexersByMode('schedule', $indexerConfig);
+        $saveIndexers = $this->indexerConfig->getIndexersByMode(IndexerMode::INPUT_KEY_REALTIME, $indexerConfig);
+        $scheduleIndexers = $this->indexerConfig->getIndexersByMode(IndexerMode::INPUT_KEY_SCHEDULE, $indexerConfig);
 
         $indexerId = $row->getData('indexer_id');
 
