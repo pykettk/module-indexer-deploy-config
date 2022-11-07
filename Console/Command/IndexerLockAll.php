@@ -75,7 +75,7 @@ class IndexerLockAll extends AbstractIndexerCommand
             $indexerConfig[$mode][] = $indexer->getIndexerId();
             
             $output->writeln(sprintf(
-                '%S indexer has been locked to %s',
+                '%s indexer has been locked to %s',
                 $indexer->getTitle(),
                 $mode === IndexerSetModeCommand::INPUT_KEY_SCHEDULE ? 'Update on Schedule' : 'Update on Save'
             ));
