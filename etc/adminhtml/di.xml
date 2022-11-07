@@ -8,22 +8,12 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <!-- Prevent Indexer Mode Changes from Save to Schedule -->
-    <virtualType name="setOnSaveIndexerMode" type="Element119\IndexerDeployConfig\Plugin\SetIndexerMode">
-        <arguments>
-            <argument name="indexerMode" xsi:type="string">save</argument>
-        </arguments>
-    </virtualType>
     <type name="Magento\Indexer\Controller\Adminhtml\Indexer\MassChangelog">
-        <plugin name="config_based_indexer_mode_mass_action_schedule" type="setOnSaveIndexerMode"/>
+        <plugin name="config_based_indexer_mode_mass_action_schedule" type="\Element119\IndexerDeployConfig\Plugin\SetIndexerModeRealtime"/>
     </type>
 
     <!-- Prevent Indexer Mode Changes from Schedule to Save -->
-    <virtualType name="setOnScheduleIndexerMode" type="Element119\IndexerDeployConfig\Plugin\SetIndexerMode">
-        <arguments>
-            <argument name="indexerMode" xsi:type="string">schedule</argument>
-        </arguments>
-    </virtualType>
     <type name="Magento\Indexer\Controller\Adminhtml\Indexer\MassOnTheFly">
-        <plugin name="config_based_indexer_mode_mass_action_save" type="setOnScheduleIndexerMode"/>
+        <plugin name="config_based_indexer_mode_mass_action_save" type="\Element119\IndexerDeployConfig\Plugin\SetIndexerModeSchedule"/>
     </type>
 </config>
