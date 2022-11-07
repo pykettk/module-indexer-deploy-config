@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Element119\IndexerDeployConfig\Model;
 
-use Element119\IndexerDeployConfig\Exception\IndexerConfigurationException;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\RuntimeException;
