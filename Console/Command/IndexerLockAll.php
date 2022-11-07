@@ -82,6 +82,7 @@ class IndexerLockAll extends AbstractIndexerCommand
         }
 
         $this->configWriter->saveConfig([ConfigFilePool::APP_CONFIG => ['indexers' => $indexerConfig]], true);
+        $output->writeln("\nIndexers locked. Please run app:config:import.");
     }
 
     /**
