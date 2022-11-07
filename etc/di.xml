@@ -16,7 +16,9 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="IndexerLockAll" xsi:type="object">Element119\IndexerDeployConfig\Console\Command\IndexerLockAll</item>
+                <item name="IndexerLockAll" xsi:type="object">
+                    Element119\IndexerDeployConfig\Console\Command\IndexerLockAll
+                </item>
             </argument>
         </arguments>
     </type>

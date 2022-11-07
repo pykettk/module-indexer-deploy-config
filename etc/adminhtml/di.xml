@@ -9,11 +9,13 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <!-- Prevent Indexer Mode Changes from Save to Schedule -->
     <type name="Magento\Indexer\Controller\Adminhtml\Indexer\MassChangelog">
-        <plugin name="config_based_indexer_mode_mass_action_schedule" type="\Element119\IndexerDeployConfig\Plugin\SetIndexerModeRealtime"/>
+        <plugin name="config_based_indexer_mode_mass_action_schedule"
+                type="\Element119\IndexerDeployConfig\Plugin\SetIndexerModeRealtime"/>
     </type>
 
     <!-- Prevent Indexer Mode Changes from Schedule to Save -->
     <type name="Magento\Indexer\Controller\Adminhtml\Indexer\MassOnTheFly">
-        <plugin name="config_based_indexer_mode_mass_action_save" type="\Element119\IndexerDeployConfig\Plugin\SetIndexerModeSchedule"/>
+        <plugin name="config_based_indexer_mode_mass_action_save"
+                type="\Element119\IndexerDeployConfig\Plugin\SetIndexerModeSchedule"/>
     </type>
 </config>
