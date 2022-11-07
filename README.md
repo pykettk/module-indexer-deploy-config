@@ -103,5 +103,41 @@ Coming soon...
 
 <br>
 
-### `indexer:set-mode` Messaging
-Coming soon...
+### `indexer:lock-all` Command
+The module adds a new `indexer:lock-all` command that you can use to lock the indexer modes via the command line.
+
+```
+Description:
+  Lock all indexers
+
+Usage:
+  indexer:lock-all [options]
+
+Options:
+  -m, --mode=MODE       Passing one of two modes (schedule, realtime) will lock all indexers to that mode.
+  -h, --help            Display this help message
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi            Force ANSI output
+      --no-ansi         Disable ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+```
+
+<br>
+
+![no command arguments](https://user-images.githubusercontent.com/40261741/200428379-36934940-cf7a-43f7-9ba3-3358dd97a0de.png)
+
+*No arguments locks the indexer modes to their current state.*
+
+<br>
+
+![realtime argument](https://user-images.githubusercontent.com/40261741/200428676-cdb44054-19a8-4421-a4f8-bf9fbc93cbb6.png)
+
+*Passing `-m realtime` as the argument sets all indexers to `Update on Save`.*
+
+<br>
+
+![schedule argument](https://user-images.githubusercontent.com/40261741/200428778-f4441b0d-67ec-4911-b612-ad1a47a96558.png)
+
+*Passing `-m schedule` as the argument sets all indexers to `Update by Schedule`.*
