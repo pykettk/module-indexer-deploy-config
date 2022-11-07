@@ -10,6 +10,7 @@ use Magento\Framework\App\ObjectManagerFactory;
 use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Indexer\Console\Command\AbstractIndexerCommand;
 use Magento\Indexer\Console\Command\IndexerSetModeCommand;
+use Magento\Indexer\Model\Indexer;
 use Magento\Indexer\Model\Indexer\CollectionFactory;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,6 +20,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class IndexerLockAll extends AbstractIndexerCommand
 {
     private \Magento\Framework\App\DeploymentConfig\Writer $configWriter;
+
+    public array $modes = [
+        IndexerSetModeCommand::INPUT_KEY_SCHEDULE,
+        IndexerSetModeCommand::INPUT_KEY_REALTIME
+    ];
 
     /**
      * Constructor.
@@ -43,29 +49,27 @@ class IndexerLockAll extends AbstractIndexerCommand
         InputInterface $input,
         OutputInterface $output
     ) {
-        $mode = $input->getOption(IndexerSetModeCommand::INPUT_KEY_MODE);
+        $modeInput = $input->getOption(IndexerSetModeCommand::INPUT_KEY_MODE);
 
-        $modes = [
-            IndexerSetModeCommand::INPUT_KEY_SCHEDULE,
-            IndexerSetModeCommand::INPUT_KEY_REALTIME
-        ];
-
-        if (!is_null($mode) && !in_array($mode, $modes, true))
-        {
+        if (!is_null($modeInput) && !in_array($modeInput, $this->modes, true)) {
             throw new InvalidArgumentException(
-                'Passed mode must be one of: ' . implode(', ', $modes)
+                'Passed mode must be one of: ' . implode(', ', $this->modes)
             );
         }
 
         $indexerConfig = [];
 
+        /** @var Indexer $indexer */
         foreach ($this->getAllIndexers() as $indexer) {
+            $mode = $modeInput;
+            if (is_null($modeInput)) {
+                $mode = $indexer->isScheduled() ? IndexerSetModeCommand::INPUT_KEY_SCHEDULE : IndexerSetModeCommand::INPUT_KEY_REALTIME;
+            }
             $indexerConfig[$mode][] = $indexer->getIndexerId();
+            $output->writeln($indexer->getTitle() . ' indexer has been locked to ' . ($mode === IndexerSetModeCommand::INPUT_KEY_SCHEDULE ? 'Update on Schedule' : 'Update on Save'));
         }
 
         $this->configWriter->saveConfig([ConfigFilePool::APP_CONFIG => ['indexers' => $indexerConfig]], true);
-
-        $output->writeln('All indexers have been locked to ' . ($mode === 'schedule' ? 'Update on Schedule' : 'Update on Save'));
     }
 
     /**
@@ -74,9 +78,15 @@ class IndexerLockAll extends AbstractIndexerCommand
     protected function configure()
     {
         $this->setName('indexer:lock-all');
-        $this->setDescription('Lock all indexers (default locks to Update on Schedule)');
+        $this->setDescription('Lock all indexers');
         $this->setDefinition([
-            new InputOption(IndexerSetModeCommand::INPUT_KEY_MODE, 'm', InputArgument::OPTIONAL, 'Mode', null),
+            new InputOption(
+                IndexerSetModeCommand::INPUT_KEY_MODE, 'm',
+                InputArgument::OPTIONAL,
+                'Passing one of two modes (' . implode(', ',
+                    $this->modes) . ') will lock all indexers to that mode',
+                null
+            ),
         ]);
         parent::configure();
     }
