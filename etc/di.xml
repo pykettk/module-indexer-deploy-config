@@ -13,6 +13,14 @@
                 sortOrder="999999"/>
     </type>
 
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="IndexerLockAll" xsi:type="object">Element119\IndexerDeployConfig\Console\Command\IndexerLockAll</item>
+            </argument>
+        </arguments>
+    </type>
+
     <type name="Magento\Deploy\Model\DeploymentConfig\ImporterPool">
         <arguments>
             <argument name="importers" xsi:type="array">
