@@ -13,6 +13,8 @@
                 sortOrder="999999"/>
     </type>
 
+    <preference for="Magento\Indexer\Console\Command\IndexerSetModeCommand" type="\Element119\IndexerDeployConfig\Console\Command\IndexerSetModeCommand" />
+
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
