@@ -1,7 +1,7 @@
 {
     "name": "element119/module-indexer-deploy-config",
     "type": "magento2-module",
-    "description": "A Magento 2 module that allows developers to specify indexer behaviour via config files.",
+    "description": "A Magento 2 module that allows developers to lock indexer modes via deployment config.",
     "license": "OSL-3.0",
     "authors": [
         {
