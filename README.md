@@ -128,6 +128,15 @@ Options:
   -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 ```
 
+> **Note**
+> 
+> You will need to run `app:config:import` after indexer modes have been set, unset, or changed in the deploy config.
+> 
+> Due to the fact that this new command writes to the deploy config files and this module makes
+[additions to the deploy config pool](https://github.com/pykettk/module-indexer-deploy-config/blob/master/etc/di.xml#L26-L39),
+any automated deployment pipelines will need to be run `app:config:import` in non-interactive mode by passing either
+`-n` or `--no-interaction` as command options to avoid [the usual prompt](https://github.com/pykettk/module-indexer-deploy-config/blob/master/Model/Config/Importer.php#L72-L144).
+
 <br>
 
 ![no command arguments](https://user-images.githubusercontent.com/40261741/200428379-36934940-cf7a-43f7-9ba3-3358dd97a0de.png)
