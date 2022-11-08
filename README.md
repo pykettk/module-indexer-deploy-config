@@ -134,7 +134,7 @@ Options:
 > 
 > Due to the fact that this new command writes to the deploy config files and this module makes
 [additions to the deploy config pool](https://github.com/pykettk/module-indexer-deploy-config/blob/master/etc/di.xml#L26-L39),
-any automated deployment pipelines will need to be run `app:config:import` in non-interactive mode by passing either
+any automated deployment pipelines will need to run `app:config:import` in non-interactive mode by passing either
 `-n` or `--no-interaction` as command options to avoid [the usual prompt](https://github.com/pykettk/module-indexer-deploy-config/blob/master/Model/Config/Importer.php#L72-L144).
 
 <br>
