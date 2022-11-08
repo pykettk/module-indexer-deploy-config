@@ -15,7 +15,7 @@
 
 </div>
 
-A Magento 2 module that allows developers to lock indexer modes via deployment config.
+<h4 align="center">A Magento 2 module that allows developers to lock indexer modes via deployment config.</h4>
 
 ---
 
