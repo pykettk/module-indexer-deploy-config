@@ -6,6 +6,10 @@
 
 <h1 align="center">element119 | Indexer Deploy Config</h1>
 
+<h4 align="center">A Magento 2 module that allows developers to lock indexer modes via deployment config.</h4>
+
+<br>
+
 <div align="center">
 
 ![github release](https://img.shields.io/github/v/release/pykettk/module-indexer-deploy-config?color=ffbf00&label=version)
@@ -14,8 +18,6 @@
 ![packagist downloads](https://img.shields.io/packagist/dt/element119/module-indexer-deploy-config?color=ff0000)
 
 </div>
-
-<h4 align="center">A Magento 2 module that allows developers to lock indexer modes via deployment config.</h4>
 
 ---
 
