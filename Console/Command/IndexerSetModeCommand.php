@@ -75,10 +75,13 @@ class IndexerSetModeCommand extends CoreIndexerSetModeCommand
                 unset($indexerConfig['realtime'][$key]);
             }
             if (($key = array_search($indexer->getId(), $indexerConfig['schedule'], true)) !== false) {
-                unset($indexerConfig['realtime'][$key]);
+                unset($indexerConfig['schedule'][$key]);
             }
             $indexerConfig[$mode][] = $indexer->getId();
         }
+
+        $indexerConfig['realtime'] = array_values($indexerConfig['realtime']);
+        $indexerConfig['schedule'] = array_values($indexerConfig['schedule']);
 
         $this->configWriter->saveConfig([ConfigFilePool::APP_CONFIG => ['indexers' => $indexerConfig]], true);
 
