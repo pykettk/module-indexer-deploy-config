@@ -23,6 +23,9 @@ class IndexerConfig
     /** @var array */
     private array $indexerConfig = [];
 
+    /** @var array */
+    private array $flatIndexerConfig = [];
+
     /**
      * @param DeploymentConfig $deploymentConfig
      * @param LoggerInterface $logger
@@ -51,6 +54,29 @@ class IndexerConfig
         }
 
         return $this->indexerConfig;
+    }
+
+    /**
+     * Get indexer config as indexerId => lockedMode pairs.
+     *
+     * @return array
+     */
+    public function getFlatIndexerConfig(): array
+    {
+        if (!$this->flatIndexerConfig) {
+            $flatIndexerConfig = [];
+            $indexerConfig = $this->getIndexerConfig();
+
+            foreach ($indexerConfig as $mode => $indexers) {
+                foreach ($indexers as $indexer) {
+                    $flatIndexerConfig[$indexer] = $mode;
+                }
+            }
+
+            $this->flatIndexerConfig = $flatIndexerConfig;
+        }
+
+        return $this->flatIndexerConfig;
     }
 
     /**
