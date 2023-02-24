@@ -20,6 +20,9 @@ class IndexerConfig
     /** @var LoggerInterface */
     private LoggerInterface $logger;
 
+    /** @var array */
+    private array $indexerConfig = [];
+
     /**
      * @param DeploymentConfig $deploymentConfig
      * @param LoggerInterface $logger
@@ -39,13 +42,15 @@ class IndexerConfig
      */
     public function getIndexerConfig(): array
     {
-        try {
-            return $this->deploymentConfig->get('indexers') ?? [];
-        } catch (FileSystemException | RunTimeException $e) {
-            $this->logger->error(__('Could not load indexer configuration from app/etc/config.php'));
-
-            return [];
+        if (!$this->indexerConfig) {
+            try {
+                $this->indexerConfig = $this->deploymentConfig->get('indexers');
+            } catch (FileSystemException|RunTimeException $e) {
+                $this->logger->error(__('Could not load indexer configuration from app/etc/config.php'));
+            }
         }
+
+        return $this->indexerConfig;
     }
 
     /**
