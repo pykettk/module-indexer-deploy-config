@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © element119. All rights reserved.
+ * See LICENCE.txt for licence details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="system">
+            <group id="e119_indexer_deploy_config"
+                   translate="label"
+                   type="text"
+                   sortOrder="1000"
+                   showInDefault="1"
+                   showInWebsite="0"
+                   showInStore="0">
+                <label>Indexer Mode Locking</label>
+                <field id="cron_enable"
+                       translate="label comment"
+                       type="select"
+                       sortOrder="10"
+                       showInDefault="1"
+                       showInWebsite="0"
+                       showInStore="0"
+                       canRestore="1">
+                    <label>Enable Cron Fallback</label>
+                    <comment>
+                        <![CDATA[
+                        Enable the cron job that ensures indexers are respecting their deployment config.
+                        <br>
+                        This is a fallback mechanism designed to catch unexpected behaviour that causes indexer modes to change.
+                        ]]>
+                    </comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
