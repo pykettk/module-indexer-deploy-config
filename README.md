@@ -107,6 +107,15 @@ Coming soon...
 
 <br>
 
+### Indexer Mode Locking Cron Fallback
+A new system configuration option allows you to enable a cron job that will ensure indexers are in the mode they are
+supposed to be in, according to deployment config. This option can be found in `Stores -> Configuration -> Advanced ->
+System -> Indexer Mode Locking`.
+
+![indexer-mode-locking-cron-config](https://user-images.githubusercontent.com/40261741/221367876-d04e812d-9628-4bb2-a335-8532dd27299e.png)
+
+<br>
+
 ### `indexer:lock-all` Command
 The module adds a new `indexer:lock-all` command that you can use to lock the indexer modes via the command line.
 
