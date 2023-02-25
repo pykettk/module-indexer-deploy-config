@@ -9,10 +9,10 @@ namespace Element119\IndexerDeployConfig\Plugin;
 
 use Element119\IndexerDeployConfig\Model\IndexerConfig;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
+use Magento\Framework\Mview\View\StateInterface;
 use Magento\Indexer\Console\Command\IndexerSetModeCommand as IndexerMode;
 use Magento\Indexer\Controller\Adminhtml\Indexer\MassChangelog;
 use Magento\Indexer\Controller\Adminhtml\Indexer\MassOnTheFly;
-use Magento\Indexer\Model\Indexer;
 
 class SetIndexerMode
 {
@@ -41,28 +41,82 @@ class SetIndexerMode
     }
 
     /**
-     * Determine whether the indexer should be in scheduled mode or not based on deploy configuration.
+     * Ensure indexer mode remains in the mode defined by deploy config.
      *
-     * @param Indexer $subject
-     * @param bool $scheduled
+     * @param StateInterface $subject
+     * @param string $mode
+     * @return string[]
+     */
+    public function beforeSetMode(
+        StateInterface $subject,
+        string $mode
+    ): array {
+        if (!$this->indexerConfig->getIndexerConfig()
+            || !($indexerId = $this->indexerConfig->getIndexerIdForViewId($subject->getViewId()))
+            || !$this->indexerConfig->isIndexerLocked($indexerId)
+        ) {
+            return [$mode]; // no indexers should be locked, could not find indexer ID, or indexer is not mode-locked
+        }
+
+        $isBeingScheduled = $mode === 'enabled';
+        $shouldBeScheduled = $this->indexerConfig->indexerHasMode($indexerId, IndexerMode::INPUT_KEY_SCHEDULE);
+        $shouldBeRealTime = $this->indexerConfig->indexerHasMode($indexerId, IndexerMode::INPUT_KEY_REALTIME);
+
+        if ($shouldBeScheduled && !$isBeingScheduled) {
+            return ['enabled']; // maintain on schedule status
+        } else if ($shouldBeRealTime && $isBeingScheduled) {
+            return ['disabled']; // maintain on save status
+        }
+
+        return [$mode];
+    }
+
+    /**
+     * Ensure indexer mode remains in the mode defined by deploy config.
+     *
+     * @param $subject
+     * @param $key
+     * @param $value
      * @return array
      */
-    public function beforeSetScheduled(
-        Indexer $subject,
-        bool $scheduled
-    ): array {
-        $indexerConfig = $this->indexerConfig->getIndexerConfig();
-        $indexerId = $subject->getId();
-
-        if ($this->indexerConfig->indexerHasMode($indexerId, IndexerMode::INPUT_KEY_SCHEDULE, $indexerConfig)) {
-            return [true];
+    public function beforeSetData(
+        $subject,
+        $key,
+        $value = null
+    ) {
+        if (!($subject instanceof StateInterface)
+            || $key !== 'mode'
+            || !$this->indexerConfig->getIndexerConfig()
+            || !($indexerId = $this->indexerConfig->getIndexerIdForViewId($subject->getViewId()))
+            || !$this->indexerConfig->isIndexerLocked($indexerId)
+        ) {
+            // not an indexer state, not setting mode data, no indexers should be locked, cannot find indexer ID, or indexer is not mode-locked
+            return [$key, $value];
         }
 
-        if ($this->indexerConfig->indexerHasMode($indexerId, IndexerMode::INPUT_KEY_REALTIME, $indexerConfig)) {
-            return [false];
+        $isBeingScheduled = null;
+        $shouldBeScheduled = $this->indexerConfig->indexerHasMode($indexerId, IndexerMode::INPUT_KEY_SCHEDULE);
+        $shouldBeRealTime = $this->indexerConfig->indexerHasMode($indexerId, IndexerMode::INPUT_KEY_REALTIME);
+
+        if ($key === (array)$key) {
+            $mode = array_key_exists('mode', $key) ? $key['mode'] : null;
+
+            if ($mode !== null) {
+                $isBeingScheduled = $mode === 'enabled';
+            }
+        } elseif ($value !== null) {
+            $isBeingScheduled = $value === 'enabled';
         }
 
-        return [$scheduled];
+        if ($isBeingScheduled !== null) {
+            if ($shouldBeScheduled && !$isBeingScheduled) {
+                $value = 'enabled'; // maintain on schedule status
+            } else if ($shouldBeRealTime && $isBeingScheduled) {
+                $value = 'disabled'; // maintain on save status
+            }
+        }
+
+        return [$key, $value];
     }
 
     /**
