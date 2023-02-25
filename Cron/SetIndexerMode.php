@@ -49,12 +49,10 @@ class SetIndexerMode
      */
     public function execute(): void
     {
-        if (!$this->moduleConfig->isCronFallbackEnabled()) {
-            return; // fallback disabled, nothing to do
-        }
-
-        if (!($indexerConfig = $this->indexerConfig->getFlatIndexerConfig())) {
-            return; // indexers are not locked, nothing to do
+        if (!$this->moduleConfig->isCronFallbackEnabled()
+            || !($indexerConfig = $this->indexerConfig->getFlatIndexerConfig())
+        ) {
+            return; // fallback disabled or indexers are not locked, nothing to do
         }
 
         /** @var Indexer[] $allIndexers */
