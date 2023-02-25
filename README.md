@@ -19,8 +19,6 @@
 
 </div>
 
----
-
 ## 📝 Features
 ✔️ Allows you to selectively lock indexer modes via the `app/etc/config.php` file
 
@@ -31,6 +29,16 @@
 ✔️ Provides messaging for admins to see which indexers are locked via deploy config
 
 ✔️ Informs admins when they try to change indexer modes that are locked via deploy config
+
+✔️ Supports Magento Open Source and Adobe Commerce
+
+✔️ Supports Hyvä and Luma based themes
+
+✔️ Seamless integration with Magento
+
+✔️ Built with developers and extensibility in mind to make customisations as easy as possible
+
+✔️ Installable via Composer
 
 <br/>
 
@@ -91,22 +99,6 @@ php bin/magento setup:upgrade
 
 <br>
 
-## 📸 Screenshots & GIFs
-### Indexer Config Validation
-Coming soon...
-
-<br>
-
-### Indexer Config Importing
-Coming soon...
-
-<br>
-
-### Restricted Admin Controls
-![Screenshot 2022-11-06 at 19 13 09](https://user-images.githubusercontent.com/40261741/200190327-5e9f5204-d294-4a27-a27e-74fb6ea6b968.png)
-
-<br>
-
 ### Indexer Mode Locking Cron Fallback
 A new system configuration option allows you to enable a cron job that will ensure indexers are in the mode they are
 supposed to be in, according to deployment config. This option can be found in `Stores -> Configuration -> Advanced ->
@@ -163,3 +155,10 @@ any automated deployment pipelines will need to run `app:config:import` in non-i
 ![schedule argument](https://user-images.githubusercontent.com/40261741/200428778-f4441b0d-67ec-4911-b612-ad1a47a96558.png)
 
 *Passing `-m schedule` as the argument sets all indexers to `Update by Schedule`.*
+
+<br>
+
+### Restricted Admin Controls
+![restrictded-admin-controls](https://user-images.githubusercontent.com/40261741/200190327-5e9f5204-d294-4a27-a27e-74fb6ea6b968.png)
+
+<br>
