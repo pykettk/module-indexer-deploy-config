@@ -62,6 +62,7 @@ class IndexerConfig
                 $this->indexerConfig = $this->deploymentConfig->get('indexers');
             } catch (FileSystemException|RunTimeException $e) {
                 $this->logger->error(__('Could not load indexer configuration from app/etc/config.php'));
+                $this->indexerConfig = [];
             }
         }
 
