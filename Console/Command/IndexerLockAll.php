@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use Magento\Framework\App\DeploymentConfig\Writer;
 use Magento\Framework\App\ObjectManagerFactory;
 use Magento\Framework\Config\File\ConfigFilePool;
+use Magento\Framework\Console\Cli;
 use Magento\Indexer\Console\Command\AbstractIndexerCommand;
 use Magento\Indexer\Console\Command\IndexerSetModeCommand;
 use Magento\Indexer\Model\Indexer;
@@ -83,6 +84,8 @@ class IndexerLockAll extends AbstractIndexerCommand
 
         $this->configWriter->saveConfig([ConfigFilePool::APP_CONFIG => ['indexers' => $indexerConfig]], true);
         $output->writeln("\nIndexers locked. Please run app:config:import.");
+        
+        return Cli::RETURN_SUCCESS;
     }
 
     /**
