@@ -7,8 +7,10 @@ declare(strict_types=1);
 
 namespace Element119\IndexerDeployConfig\Console\Command;
 
+use Element119\IndexerDeployConfig\Model\IndexerConfig;
 use InvalidArgumentException;
 use Magento\Framework\App\DeploymentConfig\Writer;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ObjectManagerFactory;
 use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Console\Cli;
@@ -23,6 +25,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class IndexerLockAll extends AbstractIndexerCommand
 {
+    private IndexerConfig $indexerConfig;
+
     /** @var Writer */
     private Writer $configWriter;
 
@@ -40,10 +44,13 @@ class IndexerLockAll extends AbstractIndexerCommand
     public function __construct(
         ObjectManagerFactory $objectManagerFactory,
         Writer $configWriter,
-        CollectionFactory $collectionFactory = null
+        CollectionFactory $collectionFactory = null,
+        ?IndexerConfig $indexerConfig = null
     ) {
         parent::__construct($objectManagerFactory, $collectionFactory);
+
         $this->configWriter = $configWriter;
+        $this->indexerConfig = $indexerConfig ?: ObjectManager::getInstance()->get(IndexerConfig::class);
     }
 
     /**
@@ -62,19 +69,33 @@ class IndexerLockAll extends AbstractIndexerCommand
         }
 
         $indexerConfig = [];
+        $disallowedIndexers = [
+            'realtime' => $this->indexerConfig->getForbiddenOnSaveIndexers(),
+            'schedule' => $this->indexerConfig->getForbiddenByScheduleIndexers(),
+        ];
 
         /** @var Indexer $indexer */
         foreach ($this->getAllIndexers() as $indexer) {
             $mode = $modeInput;
-            
+
             if (is_null($modeInput)) {
                 $mode = $indexer->isScheduled()
                     ? IndexerSetModeCommand::INPUT_KEY_SCHEDULE
                     : IndexerSetModeCommand::INPUT_KEY_REALTIME;
             }
-            
+
+            if (in_array($indexer->getId(), $disallowedIndexers[$mode])) {
+                $output->writeln(sprintf(
+                    '%s indexer will not be locked to %s because it is not recommended',
+                    $indexer->getTitle(),
+                    $mode === IndexerSetModeCommand::INPUT_KEY_SCHEDULE ? 'Update on Schedule' : 'Update on Save'
+                ));
+
+                continue;
+            }
+
             $indexerConfig[$mode][] = $indexer->getIndexerId();
-            
+
             $output->writeln(sprintf(
                 '%s indexer has been locked to %s',
                 $indexer->getTitle(),
@@ -84,7 +105,7 @@ class IndexerLockAll extends AbstractIndexerCommand
 
         $this->configWriter->saveConfig([ConfigFilePool::APP_CONFIG => ['indexers' => $indexerConfig]], true);
         $output->writeln("\nIndexers locked. Please run app:config:import.");
-        
+
         return Cli::RETURN_SUCCESS;
     }
 
@@ -107,7 +128,7 @@ class IndexerLockAll extends AbstractIndexerCommand
                 null
             ),
         ]);
-        
+
         parent::configure();
     }
 }

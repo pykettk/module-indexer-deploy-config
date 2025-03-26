@@ -7,13 +7,17 @@ declare(strict_types=1);
 
 namespace Element119\IndexerDeployConfig\Model\Config;
 
+use Element119\IndexerDeployConfig\Model\IndexerConfig;
 use InvalidArgumentException;
 use Magento\Framework\App\DeploymentConfig\ImporterInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Indexer\Console\Command\IndexerSetModeCommand as IndexerMode;
 
 class Importer implements ImporterInterface
 {
+    private IndexerConfig $indexerConfig;
+
     /** @var IndexerRegistry */
     private IndexerRegistry $indexerRegistry;
 
@@ -21,9 +25,11 @@ class Importer implements ImporterInterface
      * @param IndexerRegistry $indexerRegistry
      */
     public function __construct(
-        IndexerRegistry $indexerRegistry
+        IndexerRegistry $indexerRegistry,
+        ?IndexerConfig $indexerConfig = null
     ) {
         $this->indexerRegistry = $indexerRegistry;
+        $this->indexerConfig = $indexerConfig ?: ObjectManager::getInstance()->get(IndexerConfig::class);
     }
 
     /**
@@ -50,10 +56,10 @@ class Importer implements ImporterInterface
                 $isScheduleMode = $mode === IndexerMode::INPUT_KEY_SCHEDULE;
 
                 // only change index mode when different, slightly more performant
-                if ($indexer->isScheduled() && $isRealTimeMode) {
+                if ($indexer->isScheduled() && $isRealTimeMode && $this->indexerConfig->isOnSaveAllowed($indexerId)) {
                     $indexer->setScheduled(false);
                     $messages[] = "<info>{$indexerId} updated to \"Update on Save\".</info>";
-                } elseif (!$indexer->isScheduled() && $isScheduleMode) {
+                } elseif (!$indexer->isScheduled() && $isScheduleMode && $this->indexerConfig->isByScheduleAllowed($indexerId)) {
                     $indexer->setScheduled(true);
                     $messages[] = "<info>{$indexerId} updated to \"Update by Schedule\".</info>";
                 }
@@ -75,6 +81,7 @@ class Importer implements ImporterInterface
 
         $indexersToChangeToRealtime = [];
         $indexersToChangeToSchedule = [];
+        $indexersToIgnore = [];
 
         $realtimeLockedIndexers = [];
         $scheduleLockedIndexers = [];
@@ -89,6 +96,14 @@ class Importer implements ImporterInterface
 
                 $isRealTimeMode = $mode === IndexerMode::INPUT_KEY_REALTIME;
                 $isScheduleMode = $mode === IndexerMode::INPUT_KEY_SCHEDULE;
+
+                if ($isRealTimeMode && !$this->indexerConfig->isOnSaveAllowed($indexerId)) {
+                    $indexersToIgnore[] = sprintf('%s cannot be set to "Update on Save"', $indexerId);
+                    continue;
+                } elseif ($isScheduleMode && !$this->indexerConfig->isByScheduleAllowed($indexerId)) {
+                    $indexersToIgnore[] = sprintf('%s cannot be set to "Update by Schedule"', $indexerId);
+                    continue;
+                }
 
                 if ($indexer->isScheduled() && $isRealTimeMode) {
                     $indexersToChangeToRealtime[] = $indexerId;
@@ -136,8 +151,16 @@ class Importer implements ImporterInterface
             $messages[] = '';
         }
 
+        if ($indexersToIgnore) {
+            $messages[] = "<info>The following indexers will not be locked to the configured modes:</info>\n"
+                . implode("\n", $indexersToIgnore);
+
+            $messages[] = '';
+        }
+
         if ($messages) {
             $messages[] = '<info>All other indexers will be unlocked.</info>';
+            $messages[] = '';
         }
 
         return $messages;

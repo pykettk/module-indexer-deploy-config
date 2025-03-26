@@ -32,4 +32,12 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Element119\IndexerDeployConfig\Model\IndexerConfig">
+        <arguments>
+            <argument name="disallowedBySchedule" xsi:type="array">
+                <item name="customer_grid" xsi:type="boolean">true</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
