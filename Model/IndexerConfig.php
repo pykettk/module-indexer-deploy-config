@@ -35,6 +35,9 @@ class IndexerConfig
     /** @var array */
     private array $viewIdToIndexerIdMap = [];
 
+    private array $disallowedBySchedule = [];
+    private array $disallowedOnSave = [];
+
     /**
      * @param DeploymentConfig $deploymentConfig
      * @param IndexerCollectionFactory $indexerCollectionFactory
@@ -43,11 +46,15 @@ class IndexerConfig
     public function __construct(
         DeploymentConfig $deploymentConfig,
         IndexerCollectionFactory $indexerCollectionFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        array $disallowedBySchedule = [],
+        array $disallowedOnSave = []
     ) {
         $this->deploymentConfig = $deploymentConfig;
         $this->indexerCollectionFactory = $indexerCollectionFactory;
         $this->logger = $logger;
+        $this->disallowedBySchedule = $disallowedBySchedule;
+        $this->disallowedOnSave = $disallowedOnSave;
     }
 
     /**
@@ -163,5 +170,25 @@ class IndexerConfig
         $modeIndexers = array_key_exists($mode, $indexerConfig) ? $indexerConfig[$mode] : [];
 
         return in_array($indexerId, $modeIndexers);
+    }
+
+    public function getForbiddenByScheduleIndexers(): array
+    {
+        return array_keys(array_filter($this->disallowedBySchedule));
+    }
+
+    public function getForbiddenOnSaveIndexers(): array
+    {
+        return array_keys(array_filter($this->disallowedOnSave));
+    }
+
+    public function isByScheduleAllowed(string $indexerId): bool
+    {
+        return !array_key_exists($indexerId, $this->disallowedBySchedule) || !$this->disallowedBySchedule[$indexerId];
+    }
+
+    public function isOnSaveAllowed(string $indexerId): bool
+    {
+        return !array_key_exists($indexerId, $this->disallowedOnSave) || !$this->disallowedOnSave[$indexerId];
     }
 }
