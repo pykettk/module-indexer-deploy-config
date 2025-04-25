@@ -40,7 +40,7 @@ class IndexerLockAll extends AbstractIndexerCommand
     public function __construct(
         ObjectManagerFactory $objectManagerFactory,
         Writer $configWriter,
-        CollectionFactory $collectionFactory = null
+        ?CollectionFactory $collectionFactory = null
     ) {
         parent::__construct($objectManagerFactory, $collectionFactory);
         $this->configWriter = $configWriter;
