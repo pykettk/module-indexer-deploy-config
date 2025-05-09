@@ -19,8 +19,8 @@ class IndexerConfigurationException extends ConfigurationMismatchException
      * @param int $code
      */
     public function __construct(
-        Phrase $phrase = null,
-        Exception $cause = null,
+        ?Phrase $phrase = null,
+        ?Exception $cause = null,
         $code = 0
     ) {
         if ($phrase === null) {
